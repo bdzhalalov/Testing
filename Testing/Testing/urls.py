@@ -15,8 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from app.views import GroupView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', GroupView.as_view(), name='main'),
     path('users/', include('users.urls')),
+    path('app/', include('app.urls')),
 ]

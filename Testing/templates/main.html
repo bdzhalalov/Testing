@@ -1,4 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    {% if groups %}
+        {% for group in groups %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h3><a href="{{ group.get_url }}">{{ group.title }}</a></h3>
+                </div>
+                <div class="card-body">
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h3>Наборы тестов отсутствуют</h3>
+    {% endif %}
 {% endblock %}
