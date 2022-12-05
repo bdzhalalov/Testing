@@ -1,17 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    {% if groups %}
-        {% for group in groups %}
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h3><a href="{{ group.get_url }}">{{ group.title }}</a></h3>
+    {% if user.is_authenticated %}
+        {% if groups %}
+            <h2>Наборы тестов:</h2>
+            {% for group in groups %}
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3><a href="{{ group.get_url }}">{{ group.title }}</a></h3>
+                    </div>
+                    <div class="card-body">
+                    </div>
                 </div>
-                <div class="card-body">
-                </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        {% else %}
+            <h3>Наборы тестов отсутствуют</h3>
+        {% endif %}
     {% else %}
-        <h3>Наборы тестов отсутствуют</h3>
+        <h6 class='alert alert-success mt-4'>Для того, чтобы проходить тесты необходима авторизация!</h6>
+        <a href={% url 'login' %} class='btn btn-success mt-4'>Авторизоваться</a>
     {% endif %}
 {% endblock %}

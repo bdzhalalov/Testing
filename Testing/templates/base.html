@@ -12,7 +12,7 @@
             {% if user.is_authenticated %}
                 <a href={% url 'logout' %}>Выйти</a>
                 <li class="list-group-item">
-                    <a href='{% url 'main' %}'>На главную</a>
+                    <input type="button" onclick="history.back();" value="Назад"/> | <a href='{% url 'main' %}'>На главную</a>
                 </li>
             {% else %}
                 <a href={% url 'registration' %}>Регистрация</a> | <a href={% url 'login' %}>Войти</a>
