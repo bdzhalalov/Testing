@@ -4,9 +4,16 @@
         <div class="card mt-5">
             <div class="card-header">
                 <h3>{{ test.test_name }}</h3>
+                {% if count == 1 %}
+                    <p>{{ count }} вопрос</p>
+                {% elif count > 1 and count <= 4 %}
+                    <p>{{ count }} вопроса</p>
+                {% else %}
+                    <p>{{ count }} вопросов</p>
+                {% endif %}
             </div>
             <div class="card-body">
-                <h6>Пройти тест</h6>
+                    <h6><a href="{{ test.question_set.first.get_url }}">Пройти тест</a></h6>
             </div>
         </div>
 {% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="card mt-5">
+        <div class="card-title">{{ question.text }}</div>
+        <div class="card-body">
+            <form action="{{ question.get_url }}" method="post">
+                {% csrf_token %}
+                <fieldset>
+                    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+                    {% for choice in question.choice_set.all %}
+                        <input type="checkbox" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                        <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+                    {% endfor %}
+                </fieldset>
+                <input type="submit" value="Следующий вопрос">
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

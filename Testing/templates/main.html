@@ -7,7 +7,7 @@
             {% for group in groups %}
                 <div class="card mt-4">
                     <div class="card-header">
-                        <h3><a href="{{ group.get_url }}">{{ group.title }}</a></h3>
+                        <h3><a href="{{ group.get_url }}">{{ group.title }} ({{ group.tests_count }})</a></h3>
                     </div>
                     <div class="card-body">
                     </div>
