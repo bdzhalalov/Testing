@@ -25,6 +25,9 @@ class Question(models.Model):
     def get_url(self):
         return reverse('question', kwargs={'id': self.pk, 'slug': self.test.slug})
 
+    def get_next_question(self):
+        return reverse('question', kwargs={'id': self.pk + 1, 'slug': self.test.slug})
+
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
@@ -48,6 +51,7 @@ class Group(models.Model):
 
 class Answer(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
+    test = models.ForeignKey(Test, on_delete=models.DO_NOTHING, default=1)
     question = models.ForeignKey(Question, on_delete=models.DO_NOTHING)
     choice = models.ForeignKey(Choice, on_delete=models.DO_NOTHING)
 

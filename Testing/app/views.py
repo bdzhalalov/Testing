@@ -1,8 +1,9 @@
 from django.db.models import Count
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.views.generic import ListView
 
-from .models import Group, Test, Question, Choice
+from .models import Group, Test, Question, Choice, Answer
 
 
 class GroupView(ListView):
@@ -10,7 +11,6 @@ class GroupView(ListView):
 
     def get(self, request, *args, **kwargs):
         groups = Group.objects.annotate(tests_count=Count('tests__id')).filter(tests_count__gte=1)
-        print(groups)
         context = {
             'groups': groups
         }
@@ -49,7 +49,61 @@ class QuestionView(ListView):
     def get(self, request, id, slug):
         test = Test.objects.get(slug=slug)
         question = get_object_or_404(Question, pk=id, test=test)
-        context = {
-            'question': question
-        }
+
+        questions_count = test.question_set.all().count()
+        last_id = test.question_set.all()[questions_count - 1].id
+        if id == last_id:
+            context = {
+                'question': question,
+                'finish': 'true'
+            }
+        else:
+            context = {
+                'question': question,
+                'next': id + 1
+            }
         return render(request, self.template_name, context)
+
+    def post(self, request, id, slug):
+        test = Test.objects.get(slug=slug)
+        question = get_object_or_404(Question, pk=id, test=test)
+
+        choice = request.POST.getlist('choice')
+
+        for elements in choice:
+            choice_value = Choice.objects.get(pk=elements)
+            Answer.objects.create(user=request.user, test=test, question=question, choice=choice_value)
+
+        questions_count = test.question_set.all().count()
+        last_id = test.question_set.all()[questions_count - 1].id
+
+        if id == last_id:
+            return redirect(reverse('result', kwargs={'slug': slug}))
+        return redirect(question.get_next_question())
+
+
+def get_result(request, slug):
+    user = request.user
+    test = Test.objects.get(slug=slug)
+    question = Question.objects.filter(test=test)
+    right_questions = 0
+    for que in question:
+        answer = Answer.objects.filter(user=user, test=test, question=que)
+        print(answer)
+        count = 0
+        for el in answer:
+            if el.choice.is_right:
+                count += 1
+
+        if que.choice_set.filter(is_right=True).count() == count == answer.count():
+            right_questions += 1
+
+    percent = round((right_questions / question.count()) * 100)
+    context = {
+        'test': test,
+        'user': user,
+        'question': question,
+        'right_questions': right_questions,
+        'percent': percent
+    }
+    return render(request, 'result.html', context)

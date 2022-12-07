@@ -13,7 +13,11 @@
                         <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
                     {% endfor %}
                 </fieldset>
-                <input type="submit" value="Следующий вопрос">
+                {% if finish %}
+                    <input type="submit" value="Посмотреть результат"> </a>
+                {% else %}
+                    <input type="submit"  value="Следующий вопрос"> </a>
+                {% endif %}
             </form>
         </div>
     </div>

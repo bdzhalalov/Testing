@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Test, Group, Question, Choice
+from .models import Test, Group, Question, Choice, Answer
 
 
 class GroupAdmin(admin.ModelAdmin):
@@ -45,3 +45,4 @@ class QuestionAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Question, QuestionAdmin)
+admin.site.register(Answer)
