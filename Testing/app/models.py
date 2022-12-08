@@ -54,6 +54,15 @@ class Answer(models.Model):
     test = models.ForeignKey(Test, on_delete=models.DO_NOTHING, default=1)
     question = models.ForeignKey(Question, on_delete=models.DO_NOTHING)
     choice = models.ForeignKey(Choice, on_delete=models.DO_NOTHING)
+    attempt = models.PositiveIntegerField(null=True)
 
     def __str__(self):
         return self.choice.choice_text
+
+
+class Attempt(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    test = models.ForeignKey(Test, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.user} - {self.test}'

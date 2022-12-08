@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import ListView
 
-from .models import Group, Test, Question, Choice, Answer
+from .models import Group, Test, Question, Choice, Answer, Attempt
 
 
 class GroupView(ListView):
@@ -67,17 +67,19 @@ class QuestionView(ListView):
     def post(self, request, id, slug):
         test = Test.objects.get(slug=slug)
         question = get_object_or_404(Question, pk=id, test=test)
+        attempt = Attempt.objects.filter(user=request.user, test=test).count()
 
         choice = request.POST.getlist('choice')
 
         for elements in choice:
             choice_value = Choice.objects.get(pk=elements)
-            Answer.objects.create(user=request.user, test=test, question=question, choice=choice_value)
+            Answer.objects.create(user=request.user, test=test, question=question, choice=choice_value, attempt=attempt+1)
 
         questions_count = test.question_set.all().count()
         last_id = test.question_set.all()[questions_count - 1].id
 
         if id == last_id:
+            Attempt.objects.create(user=request.user, test=test)
             return redirect(reverse('result', kwargs={'slug': slug}))
         return redirect(question.get_next_question())
 
@@ -86,10 +88,10 @@ def get_result(request, slug):
     user = request.user
     test = Test.objects.get(slug=slug)
     question = Question.objects.filter(test=test)
+    attempt = test.attempt_set.filter(user=user, test=test).count()
     right_questions = 0
     for que in question:
-        answer = Answer.objects.filter(user=user, test=test, question=que)
-        print(answer)
+        answer = Answer.objects.filter(user=user, test=test, question=que, attempt=attempt)
         count = 0
         for el in answer:
             if el.choice.is_right:
