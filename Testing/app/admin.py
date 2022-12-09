@@ -1,4 +1,7 @@
+# Import from third-party libraries
 from django.contrib import admin
+
+# Import from current project
 from .models import Test, Group, Question, Choice, Answer, Attempt
 
 

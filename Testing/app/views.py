@@ -3,12 +3,13 @@ from django.db.models import Count
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Import from current project
 from .models import Group, Test, Question, Choice, Answer, Attempt
 
 
-class GroupView(ListView):
+class GroupView(LoginRequiredMixin, ListView):
     template_name = 'main.html'
 
     # Get a list of test groups
@@ -20,19 +21,19 @@ class GroupView(ListView):
         return render(request, self.template_name, context)
 
 
-class GroupViewDetail(ListView):
+class GroupViewDetail(LoginRequiredMixin, ListView):
     template_name = 'groups_detail.html'
 
     # Get a test group
     def get(self, request, slug):
-        group = Group.objects.get(slug=slug)
+        group = get_object_or_404(Group, slug=slug)
         context = {
             'group': group
         }
         return render(request, self.template_name, context)
 
 
-class TestView(ListView):
+class TestView(LoginRequiredMixin, ListView):
 
     template_name = 'test.html'
 
@@ -50,7 +51,7 @@ class TestView(ListView):
         return render(request, self.template_name, context)
 
 
-class QuestionView(ListView):
+class QuestionView(LoginRequiredMixin, ListView):
 
     template_name = 'question.html'
 
